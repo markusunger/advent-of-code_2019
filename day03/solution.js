@@ -4,7 +4,7 @@
   output: part 1 - closes intersection of the two wires to the central port
                    measured by the Manhattan distance
           part 2 - fewest steps in sum for both wires to an intersection
-  problem: wires extend from a central port (location 0,0), 
+  problem: wires extend from a central port (location 0,0),
            extension expressed as directional instructions:
            R/L/U/D followed by the number of spaces on the grid
            if both wires occupy the same grid coordinate, they intersect
@@ -49,6 +49,8 @@ input.forEach((wire) => {
           break;
         case 'D':
           arr.push(`${position[0]},${position[1] - i}`);
+          break;
+        default:
       }
     }
     position = arr.slice(-1)[0].split(',').map(Number);
@@ -67,7 +69,6 @@ const distances = intersects.map((coord) => {
 console.log(Math.min(...distances));
 
 // solution part 2
-const fewestSteps = intersects.map((coord) => {
-  return wires[0].indexOf(coord) + 1 + wires[1].indexOf(coord) + 1;
-});
+const fewestSteps = intersects
+  .map(coord => wires[0].indexOf(coord) + 1 + wires[1].indexOf(coord) + 1);
 console.log(Math.min(...fewestSteps));
