@@ -9,7 +9,7 @@
   algorithm: generate all numbers in input range
                generator function that yields one number after the other
              for each number, check if valid password
-               validation: 
+               validation:
                  find at least two adjacent digits that are the same with regex
                  split number into characters, iterate with for -> as soon as digit
                    is less than digit on previous index position -> return false
@@ -20,49 +20,40 @@
                occurences of a digit
 */
 
-const input_min = 272091;
-const input_max = 815432;
-
-// const input_min = 1;
-// const input_max = 2000;
+const inputMin = 272091;
+const inputMax = 815432;
 
 (function solution() {
   function* numberGenerator() {
-    let num = input_min;
-    while (num <= input_max) yield num++;
+    let num = inputMin;
+    while (num <= inputMax) yield num += 1;
   }
 
   function isValidPassword(num) {
-    const numString = String(num);
-    const regex = new RegExp(/(\d)\1/);
-    if (!numString.match(regex)) return false;
-
-    const numArr = numString.split('');
-    return numArr.every((digit, idx) => idx === 0 | (Number(digit) >= numArr[idx - 1]));
+    if (!String(num).match(/(\d)\1/)) return false;
+    return String(num)
+      .split('')
+      .every((digit, idx) => idx === 0 || (Number(digit) >= String(num).charAt(idx - 1)));
   }
 
-  (function solution() {
-    const passwordGenerator = numberGenerator();
-    let passwordCandidate = passwordGenerator.next();
-    let passwords = [];
+  (function bruteForce() {
+    const generator = numberGenerator();
+    let candidate = generator.next().value;
+    const passwords = [];
 
-    while (!passwordCandidate.done) {
-      const pw = passwordCandidate.value;
-      if (isValidPassword(pw)) passwords.push(pw);
-      passwordCandidate = passwordGenerator.next();
+    while (candidate) {
+      if (isValidPassword(candidate)) passwords.push(candidate);
+      candidate = generator.next().value;
     }
 
     console.log(passwords.length); // part 1
 
     console.log(
-      passwords.filter(pw => {
-        const pwArr = String(pw).split('');
-        const unique = new Set(pwArr);
-        for (digit of unique) {
-          if (pwArr.filter(d => d === digit).length === 2) return true;
-        }
-        return false;
-      }).length // part 2
+      passwords.filter((pw) => {
+        const digits = String(pw).split('');
+        return digits
+          .some(digit => digits.filter(d => d === digit).length === 2);
+      }).length, // part 2
     );
   }());
 }());
